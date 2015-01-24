@@ -1,7 +1,7 @@
 ﻿#!/usr/bin/env python2
 # By CyrusFox <cyrus at lambdacore.de>
 import npyscreen, curses
-import socket, select
+import socket
 import sys
 import os
 import json
