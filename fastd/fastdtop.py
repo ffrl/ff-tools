@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python2
+#!/usr/bin/env python2
 # By CyrusFox <cyrus at lambdacore.de>
 import npyscreen, curses
 import socket
