@@ -78,18 +78,21 @@ class FastdTop(npyscreen.NPSAppManaged):
     
     def while_waiting(self):
         self.client = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
-        self.client.connect(args['socket'])
-        total_data=[]
-        while True:
-            data = self.client.recv(8192)
-            if not data: break
-            total_data.append(data)
-        json_string = ''.join(total_data)
         try:
-            self.fastd_data = json.loads(json_string.decode('utf-8'))
+            self.client.connect(args['socket'])
+            total_data=[]
+            while True:
+                data = self.client.recv(8192)
+                if not data: break
+                total_data.append(data)
+            json_string = ''.join(total_data)
+            try:
+                self.fastd_data = json.loads(json_string.decode('utf-8'))
+            except:
+                pass
+            self.client.close()
         except:
             pass
-        self.client.close()
     
     def onCleanExit(self):
         if self.client:
