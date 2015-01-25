@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python2
+#!/usr/bin/env python2
 # By CyrusFox <cyrus at lambdacore.de>
 import npyscreen, curses
 import socket
@@ -7,6 +7,7 @@ import os
 import json
 import datetime
 import argparse
+import threading
 
 class ClientList(npyscreen.GridColTitles):
     def __init__(self, *args, **keywords):
@@ -76,21 +77,6 @@ class FastdTop(npyscreen.NPSAppManaged):
         self.fastd_data = {}
         self.currentform = None
     
-    def while_waiting(self):
-        self.client = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
-        self.client.connect(args['socket'])
-        total_data=[]
-        while True:
-            data = self.client.recv(8192)
-            if not data: break
-            total_data.append(data)
-        json_string = ''.join(total_data)
-        try:
-            self.fastd_data = json.loads(json_string.decode('utf-8'))
-        except:
-            pass
-        self.client.close()
-    
     def onCleanExit(self):
         if self.client:
             self.client.close()
@@ -119,59 +105,8 @@ class MainScreen(npyscreen.ActionFormMinimal):
         self.txerrbytes = self.add(npyscreen.TitleFixedText, name = "TX error bytes:" , value="", begin_entry_at=32)
         self.clientsbox = self.add(ClientList, relx = 1, rely=18, column_width=32, select_whole_line = True, col_titles = ['Client','IP-Address','Main MAC-Address','PubKey (Truncated)'])
         self.clientsbox.values = []
+        datafetcher(self)
     
-    def while_waiting(self):
-        if self.parentApp.fastd_data:
-            self.uptime.value = str(datetime.timedelta(milliseconds=int(self.parentApp.fastd_data["uptime"]))) 
-            self.clients.value = len(self.parentApp.fastd_data["peers"])
-            self.rxpkts.value = self.parentApp.fastd_data["statistics"]["rx"]["packets"]
-            self.rxbytes.value = self.parentApp.fastd_data["statistics"]["rx"]["bytes"]
-            self.rxropkts.value = self.parentApp.fastd_data["statistics"]["rx_reordered"]["packets"]
-            self.rxrobytes.value = self.parentApp.fastd_data["statistics"]["rx_reordered"]["bytes"]
-            self.txpkts.value = self.parentApp.fastd_data["statistics"]["tx"]["packets"]
-            self.txbytes.value = self.parentApp.fastd_data["statistics"]["tx"]["bytes"]
-            self.txdpdpkts.value = self.parentApp.fastd_data["statistics"]["tx_dropped"]["packets"]
-            self.txdpdbytes.value = self.parentApp.fastd_data["statistics"]["tx_dropped"]["bytes"]
-            self.txerrpkts.value = self.parentApp.fastd_data["statistics"]["tx_error"]["packets"]
-            self.txerrbytes.value = self.parentApp.fastd_data["statistics"]["tx_error"]["bytes"]
-            
-            
-            rows = []
-            peer_counter = 1
-            for peer in self.parentApp.fastd_data["peers"]:
-                peer_obj = self.parentApp.fastd_data["peers"][peer]
-                row = []
-                if peer_obj["name"]:
-                    name = """{0}. {1}""".format(str(peer_counter), str(peer_obj["name"]))
-                    row.append(name)
-                else:
-                    name = """{0}. {1}""".format(str(peer_counter), 'No name set')
-                    row.append(name)
-                row.append(str(peer_obj["address"]))
-                if peer_obj["connection"]:
-                    row.append(str(peer_obj["connection"]["mac_addresses"][0]))
-                else:
-                    row.append('Not connected')
-                row.append(str(peer))
-                rows.append(row)
-                peer_counter += 1
-            self.clientsbox.values = rows
-            self.clientsbox.fastd_data = self.parentApp.fastd_data
-        self.uptime.display()
-        self.clients.display()
-        self.conn_clients.display()
-        self.rxpkts.display()
-        self.rxbytes.display()
-        self.rxropkts.display()
-        self.rxrobytes.display()
-        self.txpkts.display()
-        self.txbytes.display()
-        self.txdpdpkts.display()
-        self.txdpdbytes.display()
-        self.txerrpkts.display()
-        self.txerrbytes.display()
-        self.clientsbox.display()
-        
     def on_ok(self):
         self.parentApp.switchForm(None)
     
@@ -179,6 +114,75 @@ class MainScreen(npyscreen.ActionFormMinimal):
         if self.name == "FastdTop":
             screen_name = "MAIN"
         self.parentApp.change_form(screen_name)
+
+def datafetcher(self):
+    client = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
+    client.connect(args['socket'])
+    total_data=[]
+    while True:
+        data = client.recv(8192)
+        if not data: break
+        total_data.append(data)
+    json_string = ''.join(total_data)
+    try:
+        fastd_data = json.loads(json_string.decode('utf-8'))
+    except:
+        pass
+    client.close()
+    
+    if fastd_data:
+        self.uptime.value = str(datetime.timedelta(milliseconds=int(fastd_data["uptime"]))) 
+        self.clients.value = len(fastd_data["peers"])
+        self.rxpkts.value = fastd_data["statistics"]["rx"]["packets"]
+        self.rxbytes.value = fastd_data["statistics"]["rx"]["bytes"]
+        self.rxropkts.value = fastd_data["statistics"]["rx_reordered"]["packets"]
+        self.rxrobytes.value = fastd_data["statistics"]["rx_reordered"]["bytes"]
+        self.txpkts.value = fastd_data["statistics"]["tx"]["packets"]
+        self.txbytes.value = fastd_data["statistics"]["tx"]["bytes"]
+        self.txdpdpkts.value = fastd_data["statistics"]["tx_dropped"]["packets"]
+        self.txdpdbytes.value = fastd_data["statistics"]["tx_dropped"]["bytes"]
+        self.txerrpkts.value = fastd_data["statistics"]["tx_error"]["packets"]
+        self.txerrbytes.value = fastd_data["statistics"]["tx_error"]["bytes"]
+        
+        
+        rows = []
+        peer_counter = 1
+        for peer in fastd_data["peers"]:
+            peer_obj = fastd_data["peers"][peer]
+            row = []
+            if peer_obj["name"]:
+                name = """{0}. {1}""".format(str(peer_counter), str(peer_obj["name"]))
+                row.append(name)
+            else:
+                name = """{0}. {1}""".format(str(peer_counter), 'No name set')
+                row.append(name)
+            row.append(str(peer_obj["address"]))
+            if peer_obj["connection"]:
+                row.append(str(peer_obj["connection"]["mac_addresses"][0]))
+            else:
+                row.append('Not connected')
+            row.append(str(peer))
+            rows.append(row)
+            peer_counter += 1
+        self.clientsbox.values = rows
+        self.clientsbox.fastd_data = fastd_data
+    self.uptime.display()
+    self.clients.display()
+    self.conn_clients.display()
+    self.rxpkts.display()
+    self.rxbytes.display()
+    self.rxropkts.display()
+    self.rxrobytes.display()
+    self.txpkts.display()
+    self.txbytes.display()
+    self.txdpdpkts.display()
+    self.txdpdbytes.display()
+    self.txerrpkts.display()
+    self.txerrbytes.display()
+    self.clientsbox.display()
+    threading.Timer(100000, datafetcher(self)).start()
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
