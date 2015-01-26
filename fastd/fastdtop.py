@@ -104,12 +104,13 @@ class FastdTop(npyscreen.NPSAppManaged):
         self.resetHistory()
 
 class MainScreen(npyscreen.ActionFormMinimal):
+    OK_BUTTON_TEXT = "EXIT"
     def create(self):
         self.keypress_timeout_default = 10
         self.add(npyscreen.TitleText, name = "Server Socket:", value=args['socket'], begin_entry_at=32)
         self.uptime = self.add(npyscreen.TitleFixedText, name = "Uptime:" , value="", begin_entry_at=32)
-        self.clients = self.add(npyscreen.TitleFixedText, name = "Configured Peers:" , value="", begin_entry_at=32)
-        self.conn_clients = self.add(npyscreen.TitleFixedText, name = "Connected Peers:" , value="Not implemented yet", begin_entry_at=32)
+        self.peers = self.add(npyscreen.TitleFixedText, name = "Known Peers:" , value="", begin_entry_at=32)
+        self.conn_peers = self.add(npyscreen.TitleFixedText, name = "Connected Peers:" , value="", begin_entry_at=32)
         self.rxpkts = self.add(npyscreen.TitleFixedText, name = "RX packets:" , value="", begin_entry_at=32)
         self.rxbytes = self.add(npyscreen.TitleFixedText, name = "RX bytes:" , value="", begin_entry_at=32)
         self.rxropkts = self.add(npyscreen.TitleFixedText, name = "RX reordered packets:" , value="", begin_entry_at=32)
@@ -120,13 +121,13 @@ class MainScreen(npyscreen.ActionFormMinimal):
         self.txdpdbytes = self.add(npyscreen.TitleFixedText, name = "TX dropped bytes:" , value="", begin_entry_at=32)
         self.txerrpkts = self.add(npyscreen.TitleFixedText, name = "TX error packets:" , value="", begin_entry_at=32)
         self.txerrbytes = self.add(npyscreen.TitleFixedText, name = "TX error bytes:" , value="", begin_entry_at=32)
-        self.clientsbox = self.add(ClientList, relx = 1, rely=18, column_width=32, select_whole_line = True, col_titles = ['Client','IP-Address','Main MAC-Address','PubKey (Truncated)'])
+        self.clientsbox = self.add(ClientList, relx = 1, rely=18, column_width=32, select_whole_line = True, col_titles = ['Peers','IP-Address','Main MAC-Address','PubKey (Truncated)'])
         self.clientsbox.values = []
     
     def while_waiting(self):
         if self.parentApp.fastd_data:
             self.uptime.value = str(datetime.timedelta(milliseconds=int(self.parentApp.fastd_data["uptime"]))) 
-            self.clients.value = len(self.parentApp.fastd_data["peers"])
+            self.peers.value = len(self.parentApp.fastd_data["peers"])
             self.rxpkts.value = self.parentApp.fastd_data["statistics"]["rx"]["packets"]
             self.rxbytes.value = self.parentApp.fastd_data["statistics"]["rx"]["bytes"]
             self.rxropkts.value = self.parentApp.fastd_data["statistics"]["rx_reordered"]["packets"]
@@ -138,9 +139,10 @@ class MainScreen(npyscreen.ActionFormMinimal):
             self.txerrpkts.value = self.parentApp.fastd_data["statistics"]["tx_error"]["packets"]
             self.txerrbytes.value = self.parentApp.fastd_data["statistics"]["tx_error"]["bytes"]
             
-            
+                        
             rows = []
             peer_counter = 1
+            connected_peers = 0
             for peer in self.parentApp.fastd_data["peers"]:
                 peer_obj = self.parentApp.fastd_data["peers"][peer]
                 row = []
@@ -152,17 +154,22 @@ class MainScreen(npyscreen.ActionFormMinimal):
                     row.append(name)
                 row.append(str(peer_obj["address"]))
                 if peer_obj["connection"]:
-                    row.append(str(peer_obj["connection"]["mac_addresses"][0]))
+                    connected_peers +=1
+                    if peer_obj["connection"]["mac_addresses"][0]:
+                        row.append(str(peer_obj["connection"]["mac_addresses"][0]))
+                    else:
+                        row.append('No MAC-Address found')
                 else:
-                    row.append('Not connected')
+                    row.append('No connection info')
                 row.append(str(peer))
                 rows.append(row)
                 peer_counter += 1
             self.clientsbox.values = rows
             self.clientsbox.fastd_data = self.parentApp.fastd_data
+            self.conn_peers.value = str(connected_peers)
         self.uptime.display()
-        self.clients.display()
-        self.conn_clients.display()
+        self.peers.display()
+        self.conn_peers.display()
         self.rxpkts.display()
         self.rxbytes.display()
         self.rxropkts.display()
