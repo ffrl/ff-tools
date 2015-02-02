@@ -11,39 +11,10 @@ import argparse
 class ClientList(npyscreen.GridColTitles):
     def __init__(self, *args, **keywords):
         super(ClientList, self).__init__(*args, **keywords)
-    
-    def set_up_handlers(self):
-        super(ClientList, self).set_up_handlers()
-        self.handlers = {
-                    curses.ascii.NL:   self.show_peer_info,
-                    curses.ascii.CR:   self.show_peer_info,
-                    curses.KEY_UP:      self.h_move_line_up,
-                    curses.KEY_LEFT:    self.h_move_cell_left,
-                    curses.KEY_DOWN:    self.h_move_line_down,
-                    curses.KEY_RIGHT:   self.h_move_cell_right,
-                    "k":                self.h_move_line_up,
-                    "h":                self.h_move_cell_left,
-                    "j":                self.h_move_line_down,
-                    "l":                self.h_move_cell_right,
-                    curses.KEY_NPAGE:   self.h_move_page_down,
-                    curses.KEY_PPAGE:   self.h_move_page_up,
-                    curses.KEY_HOME:    self.h_show_beginning,
-                    curses.KEY_END:     self.h_show_end,
-                    ord('g'):           self.h_show_beginning,
-                    ord('G'):           self.h_show_end,
-                    curses.ascii.TAB:   self.h_exit,
-                    '^P':               self.h_exit_up,
-                    '^N':               self.h_exit_down,
-                    #curses.ascii.NL:    self.h_exit,
-                    #curses.ascii.SP:    self.h_exit,
-                    #ord('x'):       self.h_exit,
-                    ord('q'):       self.h_exit,
-                    curses.ascii.ESC:   self.h_exit,
-                    curses.KEY_MOUSE:    self.h_exit_mouse,
-                }
-        
-        self.complex_handlers = [
-                    ]
+        self.add_handlers({
+            curses.ascii.NL: self.show_peer_info,
+            curses.ascii.CR: self.show_peer_info
+        })
     
     def show_peer_info(self, h):
         peer = self.values[self.edit_cell[0]][3]
@@ -107,7 +78,7 @@ class MainScreen(npyscreen.ActionFormMinimal):
     OK_BUTTON_TEXT = "EXIT"
     def create(self):
         self.keypress_timeout_default = 10
-        self.add(npyscreen.TitleText, name = "Server Socket:", value=args['socket'], begin_entry_at=32)
+        self.add(npyscreen.TitleFixedText, name = "Server Socket:", value=args['socket'], begin_entry_at=32)
         self.uptime = self.add(npyscreen.TitleFixedText, name = "Uptime:" , value="", begin_entry_at=32)
         self.peers = self.add(npyscreen.TitleFixedText, name = "Known Peers:" , value="", begin_entry_at=32)
         self.conn_peers = self.add(npyscreen.TitleFixedText, name = "Connected Peers:" , value="", begin_entry_at=32)
@@ -155,7 +126,7 @@ class MainScreen(npyscreen.ActionFormMinimal):
                 row.append(str(peer_obj["address"]))
                 if peer_obj["connection"]:
                     connected_peers +=1
-                    if peer_obj["connection"]["mac_addresses"][0]:
+                    if peer_obj["connection"]["mac_addresses"]:
                         row.append(str(peer_obj["connection"]["mac_addresses"][0]))
                     else:
                         row.append('No MAC-Address found')
