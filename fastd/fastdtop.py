@@ -20,24 +20,24 @@ class ClientList(npyscreen.GridColTitles):
         peer = self.values[self.edit_cell[0]][3]
         peer_obj = self.fastd_data["peers"][peer]
         if peer_obj["connection"]:
-            message = """Pubkey: {0}
-Name: {1}
-Address: {2}
-MAC-Addresses: {3}
-Connected since: {4}
-Method: {5}
-
-Connection Stats
-RX packets: {6}
-RX bytes: {7}
-RX reordered packets: {8}
-RX reordered bytes: {9}
-TX packets: {10}
-TX bytes: {11}
-TX dropped packets: {12}
-TX dropped bytes: {13}
-TX error packets: {14}
-TX error bytes: {15}""".format(str(peer), peer_obj["name"], peer_obj["address"], str(peer_obj["connection"]["mac_addresses"]), str(datetime.timedelta(milliseconds=int(peer_obj["connection"]["established"]))), peer_obj["connection"]["method"], peer_obj["connection"]["statistics"]["rx"]["packets"], peer_obj["connection"]["statistics"]["rx"]["bytes"], peer_obj["connection"]["statistics"]["rx_reordered"]["packets"], peer_obj["connection"]["statistics"]["rx_reordered"]["packets"], peer_obj["connection"]["statistics"]["rx_reordered"]["bytes"], peer_obj["connection"]["statistics"]["tx"]["packets"], peer_obj["connection"]["statistics"]["tx"]["bytes"], peer_obj["connection"]["statistics"]["tx_dropped"]["packets"], peer_obj["connection"]["statistics"]["tx_dropped"]["bytes"], peer_obj["connection"]["statistics"]["tx_error"]["packets"], peer_obj["connection"]["statistics"]["tx_error"]["bytes"])
+            message = ""
+            message += "Pubkey: {0}\n".format(str(peer))
+            message += "Name: {0}\n".format(str(peer_obj["name"]))
+            message += "Address: {0}\n".format(str(peer_obj["address"]))
+            message += "MAC-Addresses: {0}\n".format(str(peer_obj["connection"]["mac_addresses"]))
+            message += "Connected since: {0}\n".format(str(datetime.timedelta(milliseconds=int(peer_obj["connection"]["established"]))))
+            message += "Method: {0}\n".format(str(peer_obj["connection"]["method"]))
+            message += "\nConnection Stats\n"
+            message += "RX packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx"]["packets"]))
+            message += "RX bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx"]["bytes"]))
+            message += "RX reordered packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx_reordered"]["packets"]))
+            message += "RX reordered bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx_reordered"]["bytes"]))
+            message += "TX packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx"]["packets"]))
+            message += "TX bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx"]["bytes"]))
+            message += "TX dropped packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_dropped"]["packets"]))
+            message += "TX dropped bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_dropped"]["bytes"]))
+            message += "TX error packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_error"]["packets"]))
+            message += "TX error bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_error"]["bytes"]))
             npyscreen.notify_confirm(message, title="Client View", form_color='STANDOUT', wrap=False, wide=False, editw=0)
 
 class FastdTop(npyscreen.NPSAppManaged):
