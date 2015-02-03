@@ -38,7 +38,7 @@ class ClientList(npyscreen.GridColTitles):
             message += "TX dropped bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_dropped"]["bytes"]))
             message += "TX error packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_error"]["packets"]))
             message += "TX error bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_error"]["bytes"]))
-            npyscreen.notify_confirm(message, title="Client View", form_color='STANDOUT', wrap=False, wide=False, editw=0)
+            npyscreen.notify_confirm(message, title="Peer Information", form_color='STANDOUT', wrap=False, wide=False, editw=0)
 
 class FastdTop(npyscreen.NPSAppManaged):
     def onStart(self):
@@ -92,23 +92,24 @@ class MainScreen(npyscreen.ActionFormMinimal):
         self.txdpdbytes = self.add(npyscreen.TitleFixedText, name = "TX dropped bytes:" , value="", begin_entry_at=32)
         self.txerrpkts = self.add(npyscreen.TitleFixedText, name = "TX error packets:" , value="", begin_entry_at=32)
         self.txerrbytes = self.add(npyscreen.TitleFixedText, name = "TX error bytes:" , value="", begin_entry_at=32)
-        self.clientsbox = self.add(ClientList, relx = 1, rely=18, column_width=32, select_whole_line = True, col_titles = ['Peers','IP-Address','Main MAC-Address','PubKey (Truncated)'])
+        self.add(npyscreen.FixedText, value = "Press ENTER on peer(s) to get more information", begin_entry_at=1, rely=18)
+        self.clientsbox = self.add(ClientList, relx = 1, rely=19, column_width=32, select_whole_line = True, col_titles = ['Peers','IP-Address','Main MAC-Address','PubKey (Truncated)'])
         self.clientsbox.values = []
     
     def while_waiting(self):
         if self.parentApp.fastd_data:
             self.uptime.value = str(datetime.timedelta(milliseconds=int(self.parentApp.fastd_data["uptime"]))) 
-            self.peers.value = len(self.parentApp.fastd_data["peers"])
-            self.rxpkts.value = self.parentApp.fastd_data["statistics"]["rx"]["packets"]
-            self.rxbytes.value = self.parentApp.fastd_data["statistics"]["rx"]["bytes"]
-            self.rxropkts.value = self.parentApp.fastd_data["statistics"]["rx_reordered"]["packets"]
-            self.rxrobytes.value = self.parentApp.fastd_data["statistics"]["rx_reordered"]["bytes"]
-            self.txpkts.value = self.parentApp.fastd_data["statistics"]["tx"]["packets"]
-            self.txbytes.value = self.parentApp.fastd_data["statistics"]["tx"]["bytes"]
-            self.txdpdpkts.value = self.parentApp.fastd_data["statistics"]["tx_dropped"]["packets"]
-            self.txdpdbytes.value = self.parentApp.fastd_data["statistics"]["tx_dropped"]["bytes"]
-            self.txerrpkts.value = self.parentApp.fastd_data["statistics"]["tx_error"]["packets"]
-            self.txerrbytes.value = self.parentApp.fastd_data["statistics"]["tx_error"]["bytes"]
+            self.peers.value = str(len(self.parentApp.fastd_data["peers"]))
+            self.rxpkts.value = str(self.parentApp.fastd_data["statistics"]["rx"]["packets"])
+            self.rxbytes.value = str(self.parentApp.fastd_data["statistics"]["rx"]["bytes"])
+            self.rxropkts.value = str(self.parentApp.fastd_data["statistics"]["rx_reordered"]["packets"])
+            self.rxrobytes.value = str(self.parentApp.fastd_data["statistics"]["rx_reordered"]["bytes"])
+            self.txpkts.value = str(self.parentApp.fastd_data["statistics"]["tx"]["packets"])
+            self.txbytes.value = str(self.parentApp.fastd_data["statistics"]["tx"]["bytes"])
+            self.txdpdpkts.value = str(self.parentApp.fastd_data["statistics"]["tx_dropped"]["packets"])
+            self.txdpdbytes.value = str(self.parentApp.fastd_data["statistics"]["tx_dropped"]["bytes"])
+            self.txerrpkts.value = str(self.parentApp.fastd_data["statistics"]["tx_error"]["packets"])
+            self.txerrbytes.value = str(self.parentApp.fastd_data["statistics"]["tx_error"]["bytes"])
             
                         
             rows = []
