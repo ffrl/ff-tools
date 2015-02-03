@@ -7,6 +7,7 @@ import os
 import json
 import datetime
 import argparse
+from hurry.filesize import verbose, size
 
 class ClientList(npyscreen.GridColTitles):
     def __init__(self, *args, **keywords):
@@ -29,15 +30,15 @@ class ClientList(npyscreen.GridColTitles):
             message += "Method: {0}\n".format(str(peer_obj["connection"]["method"]))
             message += "\nConnection Stats\n"
             message += "RX packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx"]["packets"]))
-            message += "RX bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx"]["bytes"]))
+            message += "RX bytes: {0}\n".format(str(size(peer_obj["connection"]["statistics"]["rx"]["bytes"], system=verbose)))
             message += "RX reordered packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx_reordered"]["packets"]))
-            message += "RX reordered bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx_reordered"]["bytes"]))
+            message += "RX reordered bytes: {0}\n".format(str(size(peer_obj["connection"]["statistics"]["rx_reordered"]["bytes"], system=verbose)))
             message += "TX packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx"]["packets"]))
-            message += "TX bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx"]["bytes"]))
+            message += "TX bytes: {0}\n".format(str(size(peer_obj["connection"]["statistics"]["tx"]["bytes"], system=verbose)))
             message += "TX dropped packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_dropped"]["packets"]))
-            message += "TX dropped bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_dropped"]["bytes"]))
+            message += "TX dropped bytes: {0}\n".format(str(size(peer_obj["connection"]["statistics"]["tx_dropped"]["bytes"], system=verbose)))
             message += "TX error packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_error"]["packets"]))
-            message += "TX error bytes: {0}\n".format(str(peer_obj["connection"]["statistics"]["tx_error"]["bytes"]))
+            message += "TX error bytes: {0}\n".format(str(size(peer_obj["connection"]["statistics"]["tx_error"]["bytes"], system=verbose)))
             npyscreen.notify_confirm(message, title="Peer Information", form_color='STANDOUT', wrap=False, wide=False, editw=0)
 
 class FastdTop(npyscreen.NPSAppManaged):
@@ -101,15 +102,15 @@ class MainScreen(npyscreen.ActionFormMinimal):
             self.uptime.value = str(datetime.timedelta(milliseconds=int(self.parentApp.fastd_data["uptime"]))) 
             self.peers.value = str(len(self.parentApp.fastd_data["peers"]))
             self.rxpkts.value = str(self.parentApp.fastd_data["statistics"]["rx"]["packets"])
-            self.rxbytes.value = str(self.parentApp.fastd_data["statistics"]["rx"]["bytes"])
+            self.rxbytes.value = str(size(self.parentApp.fastd_data["statistics"]["rx"]["bytes"], system=verbose))
             self.rxropkts.value = str(self.parentApp.fastd_data["statistics"]["rx_reordered"]["packets"])
-            self.rxrobytes.value = str(self.parentApp.fastd_data["statistics"]["rx_reordered"]["bytes"])
+            self.rxrobytes.value = str(size(self.parentApp.fastd_data["statistics"]["rx_reordered"]["bytes"], system=verbose))
             self.txpkts.value = str(self.parentApp.fastd_data["statistics"]["tx"]["packets"])
-            self.txbytes.value = str(self.parentApp.fastd_data["statistics"]["tx"]["bytes"])
+            self.txbytes.value = str(size(self.parentApp.fastd_data["statistics"]["tx"]["bytes"], system=verbose))
             self.txdpdpkts.value = str(self.parentApp.fastd_data["statistics"]["tx_dropped"]["packets"])
-            self.txdpdbytes.value = str(self.parentApp.fastd_data["statistics"]["tx_dropped"]["bytes"])
+            self.txdpdbytes.value = str(size(self.parentApp.fastd_data["statistics"]["tx_dropped"]["bytes"], system=verbose))
             self.txerrpkts.value = str(self.parentApp.fastd_data["statistics"]["tx_error"]["packets"])
-            self.txerrbytes.value = str(self.parentApp.fastd_data["statistics"]["tx_error"]["bytes"])
+            self.txerrbytes.value = str(size(self.parentApp.fastd_data["statistics"]["tx_error"]["bytes"], system=verbose))
             
                         
             rows = []
