@@ -1,0 +1,6 @@
+# Inject node information into alfred
+#
+# m h dom mon dow user    command
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+* * * * * root /srv/nodeinfo/nodeinfo.py | gzip | alfred -s 158
