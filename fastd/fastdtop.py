@@ -26,7 +26,7 @@ class ClientList(npyscreen.GridColTitles):
             message += "Name: {0}\n".format(str(peer_obj["name"]))
             message += "Address: {0}\n".format(str(peer_obj["address"]))
             message += "MAC-Addresses: {0}\n".format(str(peer_obj["connection"]["mac_addresses"]))
-            message += "Connected since: {0}\n".format(str(datetime.timedelta(milliseconds=int(peer_obj["connection"]["established"]))))
+            message += "Connected for: {0}\n".format(str(datetime.timedelta(milliseconds=int(peer_obj["connection"]["established"]))))
             message += "Method: {0}\n".format(str(peer_obj["connection"]["method"]))
             message += "\nConnection Stats\n"
             message += "RX packets: {0}\n".format(str(peer_obj["connection"]["statistics"]["rx"]["packets"]))
