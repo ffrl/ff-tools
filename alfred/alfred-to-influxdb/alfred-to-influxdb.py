@@ -10,12 +10,7 @@ import time
 import getpass
 import json
 
-USER = 'root'
-PASSWORD = 'root'
-DBNAME = 'freifunk'
-INTERVAL = 1
-
-def main(file, host='localhost', port=8086, socket='/var/run/alfred.sock'):
+def main(file, hostname='localhost', port=8086, socket='/var/run/alfred.sock', username='root', password='root', database='freifunk'):
     jsondata = {}
     if file:
         jsondata=read_jsonfile(file)
@@ -23,11 +18,11 @@ def main(file, host='localhost', port=8086, socket='/var/run/alfred.sock'):
         jsondata=Alfred(unix_sockpath=socket)
     series=create_series(jsondata)
     
-    client = InfluxDBClient(host, port, USER, PASSWORD, DBNAME)
+    client = InfluxDBClient(hostname, port, username, password, database)
     
-    print("Create database: " + DBNAME)
+    print("Create database: " + database)
     try:
-        client.create_database(DBNAME)
+        client.create_database(database)
     except InfluxDBClientError:
         print("Database already existing, skipping creation")
         pass
@@ -35,7 +30,7 @@ def main(file, host='localhost', port=8086, socket='/var/run/alfred.sock'):
     print("Create a retention policy")
     try:
         retention_policy = 'freifunk_policy'
-        client.create_retention_policy(retention_policy, '7d', 1, default=True)
+        client.create_retention_policy(retention_policy, '3d', 1, default=True)
     except InfluxDBClientError:
         print("Retention policy existing, skipping creation")
         pass
@@ -147,10 +142,16 @@ def create_series(jsondata):
 def parse_args():
     parser = argparse.ArgumentParser(
         description='export alfred data to influxdb')
-    parser.add_argument('--host', type=str, required=False, default='localhost',
-                        help='hostname influxdb http API')
+    parser.add_argument('--hostname', type=str, required=False, default='localhost',
+                        help='hostname of influxdb http API')
     parser.add_argument('--port', type=int, required=False, default=8086,
-                        help='port influxdb http API')
+                        help='port of influxdb http API')
+    parser.add_argument('--username', type=str, required=False, default='root',
+                        help='username of influxdb http API')
+    parser.add_argument('--password', type=str, required=False, default='root',
+                        help='password of influxdb http API')
+    parser.add_argument('--database', type=str, required=False, default='freifunk',
+                        help='influxdb database to write to')
     parser.add_argument('--file', type=str, required=False, default='',
                         help='read alfred data from file instead via alfred-json, this disables the use of alfred-json')
     parser.add_argument('--socket', type=str, required=False, default='/var/run/alfred.sock',
@@ -159,4 +160,4 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    main(host=args.host, port=args.port, file=args.file, socket=args.socket)
+    main(hostname=args.hostname, port=args.port, file=args.file, socket=args.socket, username=args.username, password=args.password, database=args.database)
