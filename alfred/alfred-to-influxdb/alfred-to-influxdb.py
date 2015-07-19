@@ -101,7 +101,7 @@ def create_series(jsondata):
                     pointValues['time'] = int(now.strftime('%s'))
                     pointValues['measurement'] = metric
                     pointValues['fields']['value'] = int(data[metric][type])
-                    pointValues['fields']['type'] = type
+                    pointValues['tags']['type'] = type
                     pointValues['tags']['mac'] = mac
                     #Append additional tags if existing
                     try:
@@ -119,15 +119,15 @@ def create_series(jsondata):
         #Create series for traffic
         try:
             for type_instance in data['traffic']:
-                for type in type_instance:
+                for type in data['traffic'][type_instance]:
                     pointValues = {}
                     pointValues['fields'] = {}
                     pointValues['tags'] = {}
                     pointValues['time'] = int(now.strftime('%s'))
-                    pointValues['measurement'] = metric
-                    pointValues['fields']['value'] = int(data[metric][type_instance][type])
-                    pointValues['fields']['type'] = type
-                    pointValues['fields']['type_instance'] = type_instance
+                    pointValues['measurement'] = 'traffic'
+                    pointValues['fields']['value'] = int(data['traffic'][type_instance][type])
+                    pointValues['tags']['type'] = type
+                    pointValues['tags']['type_instance'] = type_instance
                     pointValues['tags']['mac'] = mac
                     #Append additional tags if existing
                     try:
@@ -138,6 +138,7 @@ def create_series(jsondata):
                         pointValues['tags']['nodeid'] = data['nodeid']
                     except:
                         pass
+                    
                     series.append(pointValues)
         except KeyError:
             pass
