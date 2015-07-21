@@ -5,9 +5,7 @@ from influxdb import InfluxDBClient
 from influxdb.client import InfluxDBClientError
 from lib.alfred import Alfred
 import datetime
-import random
 import time
-import getpass
 import json
 
 def main(file, hostname='localhost', port=8086, socket='/var/run/alfred.sock', username='root', password='root', database='freifunk'):
