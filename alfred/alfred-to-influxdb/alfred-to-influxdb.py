@@ -3,17 +3,13 @@ import argparse
 
 from influxdb import InfluxDBClient
 from influxdb.client import InfluxDBClientError
-from lib.alfred import Alfred
 import datetime
 import time
 import json
 
-def main(file, hostname='localhost', port=8086, socket='/var/run/alfred.sock', username='root', password='root', database='freifunk'):
+def main(file, hostname='localhost', port=8086, username='root', password='root', database='freifunk'):
     jsondata = {}
-    if file:
-        jsondata=read_jsonfile(file)
-    else:
-        jsondata=Alfred(unix_sockpath=socket)
+    jsondata=read_jsonfile(file)
     series=create_series(jsondata)
     
     client = InfluxDBClient(hostname, port, username, password, database)
@@ -151,11 +147,9 @@ def parse_args():
     parser.add_argument('--database', type=str, required=False, default='freifunk',
                         help='influxdb database to write to')
     parser.add_argument('--file', type=str, required=False, default='',
-                        help='read alfred data from file instead via alfred-json, this disables the use of alfred-json')
-    parser.add_argument('--socket', type=str, required=False, default='/var/run/alfred.sock',
-                        help='provide socket for alfred-json, optional')
+                        help='alfred data file to read')
     return parser.parse_args()
 
 if __name__ == '__main__':
     args = parse_args()
-    main(hostname=args.hostname, port=args.port, file=args.file, socket=args.socket, username=args.username, password=args.password, database=args.database)
+    main(hostname=args.hostname, port=args.port, file=args.file, username=args.username, password=args.password, database=args.database)
