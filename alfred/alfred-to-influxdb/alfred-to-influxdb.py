@@ -69,7 +69,7 @@ def create_series(jsondata):
                 pointValues['tags']['mac'] = mac
                 #Append additional tags if existing
                 try:
-                    pointValues['tags']['hostname'] = data['hostname']
+                    pointValues['tags']['hostname'] = data['hostname'].lower()
                 except:
                     pass
                 try:
@@ -94,7 +94,7 @@ def create_series(jsondata):
                     pointValues['tags']['mac'] = mac
                     #Append additional tags if existing
                     try:
-                        pointValues['tags']['hostname'] = data['hostname']
+                        pointValues['tags']['hostname'] = data['hostname'].lower()
                     except:
                         pass
                     try:
@@ -120,7 +120,7 @@ def create_series(jsondata):
                     pointValues['tags']['mac'] = mac
                     #Append additional tags if existing
                     try:
-                        pointValues['tags']['hostname'] = data['hostname']
+                        pointValues['tags']['hostname'] = data['hostname'].lower()
                     except:
                         pass
                     try:
