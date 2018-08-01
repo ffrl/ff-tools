@@ -1,0 +1,84 @@
+{
+    "sites": [
+        {
+            "site_code": "ddorf",
+            "default_domain": "legacy",
+            "domains": [
+                {
+                    "domain": "ffddorf_dom0",
+                    "zipcodes": ["40210", "40211", "40212", "40213", "40215", "40217", "40219"]
+                },
+                {
+                    "domain": "ffddorf_dom1",
+                    "zipcodes": ["40221", "40223", "40225", "40227", "40229"]
+                },
+                {
+                    "domain": "ffddorf_dom2",
+                    "zipcodes": ["40231", "40233", "40235", "40237", "40239"]
+                },
+                {
+                    "domain": "ffddorf_dom3",
+                    "zipcodes": ["40468"]
+                },
+                {
+                    "domain": "ffddorf_dom4",
+                    "zipcodes": ["40470", "40472", "40474", "40476", "40477", "40479"]
+                },
+                {
+                    "domain": "ffddorf_dom5",
+                    "zipcodes": ["40489"]
+                },
+                {
+                    "domain": "ffddorf_dom6",
+                    "zipcodes": ["40545", "40547", "40549"]
+                },
+                {
+                    "domain": "ffddorf_dom7",
+                    "zipcodes": ["40589"]
+                },
+                {
+                    "domain": "ffddorf_dom8",
+                    "zipcodes": ["40591", "40593", "40595", "40597", "40599"]
+                },
+                {
+                    "domain": "ffddorf_dom9",
+                    "zipcodes": ["40625", "40627", "40629"]
+                },
+                {
+                    "domain": "ffddorf_dom10",
+                    "zipcodes": ["40721"]
+                }
+            ]
+        },
+        {
+            "site_code": "neuss",
+            "default_domain": "legacy_neuss",
+            "domains": [
+                {
+                    "domain": "ffneuss_dom0",
+                    "zipcodes": ["41460", "41462", "41464"]
+                },
+                {
+                    "domain": "ffneuss_dom1",
+                    "zipcodes": ["41564", "41352", "41472"]
+                },
+                {
+                    "domain": "ffneuss_dom2",
+                    "zipcodes": ["40667", "40670", "40668"]
+                },
+                {
+                    "domain": "ffneuss_dom3",
+                    "zipcodes": ["41466", "41468", "41469", "41470"]
+                },
+                {
+                    "domain": "ffneuss_dom4",
+                    "zipcodes": ["41542", "41541", "41539", "41540"]
+                },
+                {
+                    "domain": "ffneuss_dom5",
+                    "zipcodes": ["41363", "41516", "41569", "41515", "41517"]
+                }
+            ]
+        }
+    ]
+}
